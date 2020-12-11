@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 24-nov-2016 11:40:00 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>     
+ 
+  <sql-query name="spLoginUsuario">        
+        <return-scalar column="idUsuario" type="int"/>
+        <return-scalar column="idCliente" type="int"/>
+        <return-scalar column="nombre" type="string"/>
+        <return-scalar column="apellidos" type="string"/>
+        <return-scalar column="idRol" type="int"/>  
+        <return-scalar column="flagNotificar" type="boolean"/>           
+        {CALL spLoginUsuario(:_usuario,:_password)}
+    </sql-query>
+    <sql-query name="spSelectCuenta">        
+        <return-scalar column="idCuenta" type="int"/>
+        <return-scalar column="nroCuenta" type="string"/>
+        <return-scalar column="fechaInscripcion" type="date"/>
+        <return-scalar column="saldo" type="double"/>
+        {CALL spSelectCuenta(:_idCliente)}
+    </sql-query>
+    <sql-query name="spFindCuentaNro">        
+        <return-scalar column="idCuenta" type="int"/>
+        <return-scalar column="nroCuenta" type="string"/>
+        <return-scalar column="fechaInscripcion" type="date"/>
+        <return-scalar column="saldo" type="double"/>
+        <return-scalar column="nombres" type="string"/>
+        <return-scalar column="apellidos" type="string"/>
+        {CALL spFindCuentaNro(:_nroCuenta)}
+    </sql-query>
+    
+    
+    <sql-query name="spSelectMovimientos">        
+        <return-scalar column="monto" type="double"/>
+        <return-scalar column="fecha" type="date"/>
+        <return-scalar column="tipo" type="int"/>
+        {CALL spSelectMovimientos(:_idCuenta)}
+    </sql-query>
+    <sql-query name="spSelectNotificacion">        
+        <return-scalar column="idNotificacion" type="int"/>
+        <return-scalar column="titulo" type="string"/>
+        <return-scalar column="mensaje" type="string"/>
+        <return-scalar column="fecha" type="date"/>
+        {CALL spSelectNotificacion(:_idCliente)}
+    </sql-query>
+    
+    <sql-query name="spSelectUsuarioCliente">        
+        <return-scalar column="idUsuario" type="int"/>
+        <return-scalar column="idCliente" type="int"/>
+        <return-scalar column="nombres" type="string"/>
+        <return-scalar column="usuario" type="string"/>
+        <return-scalar column="password" type="string"/>        
+        <return-scalar column="apellidos" type="string"/>
+        <return-scalar column="idTipoCliente" type="int"/>
+        <return-scalar column="idRol" type="int"/>
+        <return-scalar column="tipoCliente" type="string"/>
+        <return-scalar column="estado" type="boolean"/>
+        {CALL spSelectUsuarioCliente(:_idRol,:_nombres)}
+    </sql-query>
+    
+    <sql-query name="spSelectTarjeta">        
+        <return-scalar column="idTarjeta" type="int"/>
+        <return-scalar column="fechaVencimiento" type="date"/>
+        <return-scalar column="flagNotificar" type="boolean"/>
+        <return-scalar column="monto" type="double"/>
+        <return-scalar column="nroTarjeta" type="string"/>
+        {CALL spSelectTarjeta(:_idCliente)}
+    </sql-query>
+    
+    <sql-query name="spSelectCuentaTarjeta">        
+        <return-scalar column="idCuenta" type="int"/>
+        <return-scalar column="nroCuenta" type="string"/>
+        <return-scalar column="fechaVencimiento" type="date"/>
+        <return-scalar column="saldo" type="double"/>
+        <return-scalar column="fechaInscripcion" type="date"/>
+        <return-scalar column="flagNotificar" type="boolean"/>        
+        <return-scalar column="monto" type="double"/>
+        <return-scalar column="nroTarjeta" type="string"/>
+        {CALL spSelectCuentaTarjeta(:_idCliente)}
+    </sql-query>
+    
+    <sql-query name="spSelectTipoCliente">        
+        <return-scalar column="idTipoCliente" type="int"/>
+        <return-scalar column="nombre" type="string"/>
+        {CALL spSelectTipoCliente()}
+    </sql-query>
+    
+</hibernate-mapping>

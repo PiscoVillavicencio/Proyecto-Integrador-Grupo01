@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <link href="../css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+        <link href="../css/bcp.css" rel="stylesheet" type="text/css"/>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" type="text/css">
+        
+        <style>
+            .cardBcp{
+                width: 80%;
+                margin-right: auto;
+                margin: 0 auto; 
+            }
+            .row{
+                margin: 5px;
+            }
+            .msjAdvertencia{
+                color: red;
+            }
+        </style>
+        <script>
+            var ctx = "";
+        </script>
+    </head>
+    <body>
+       <body background="../img/fondoMenuBCP.png">
+         <section  id="appBcp">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <a class="navbar-brand" href="welcomeAdmin.html"><img src="../img/logoBCP.jpg" alt="" class="img"></a>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">{{user.nombre}} {{user.apellidos}}</a>
+                        </li>
+                        
+                            <li class="nav-item">
+                                <a class="nav-link" href="user.html">Usuario</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="client.html">Cliente</a>
+                            </li>                       
+                        <li class="nav-item">
+                            <a class="nav-link" href="../index.html">Salir</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+         
+            <div class="container-fluid">
+                <div v-if="frmResult">
+                    <h2>Usuarios</h2>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label>Nombres:</label>
+                                <input class="form-control" v-model="filter.nombres"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <a href="#" class="btn btn-primary"
+                           v-on:click="select()">
+                            Buscar
+                        </a>
+                        <a href="#"  class="btn btn-primary"
+                           v-on:click="showInsert()">
+                            Nuevo
+                        </a>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <table class="table tab-content table-bordered table-hover table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>USUARIO</th>
+                                        <th>NOMBRES</th>
+                                        <th>APELLIDOS</th>
+                                        <th>OPERACION</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr  v-for="(row,index)  in result">
+                                        <th scope="row">{{index+1}}</th>
+                                        <td>{{row.usuario}}</td>
+                                        <td>{{row.nombres}}</td>
+                                        <td>{{row.apellidos}}</td>
+                                        <td>
+                                            <a href="#"  class="btn btn-primary btn-sm"
+                                               v-on:click="showUpdate(row)">
+                                                Editar
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div v-if="frmInsert">
+                    <h2>Usuario</h2>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label>Nombres:</label>
+                                <input class="form-control" v-model="record.nombres"/>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label>Apellidos:</label>
+                                <input class="form-control" v-model="record.apellidos"/>
+                            </div>
+                        </div>
+                    </div>
+                   <div class="row">
+                        <div class="col-sm-6 col-md-5 col-lg-3">
+                            <div class="form-group">
+                                <label>Usuario:</label>
+                                <input class="form-control" v-model="record.usuario"/>
+                            </div>
+                        </div>
+                        <div v-if="record.idUsuario!=null" class="col-sm-6 col-md-5 col-lg-3">
+                            <div class="form-group">
+                                <br>
+                                <label>¿Actualizar contraseña?:</label>                                
+                                <input v-model="record.flagPass" type="checkbox" >
+                            </div>
+                        </div>
+                    </div>
+                    <div v-if="record.idUsuario==null || record.flagPass" class="row">
+                        <div class="col-sm-6 col-md-5 col-lg-3">
+                            <div class="form-group">
+                                <label>Password:</label>
+                                <input class="form-control" type="password" v-model="record.password"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-if="out.out!=null" >
+                        <div class="form-group">
+                            <label v-if="out.out==1" class="msjSuccess">{{out.message}}</label>
+                            <label v-if="out.out!=1" class="msjError">{{out.message}}</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <a href="#" class="btn btn-primary"
+                           v-on:click="exeInsert()">
+                            Aceptar
+                        </a>
+                        <a href="#"  class="btn btn-danger"
+                           v-on:click="closeInsert()">
+                            Cancelar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <script src="../js/lib/axios.min.js" type="text/javascript"></script>
+        <script src="../js/lib/vue.js" type="text/javascript"></script>
+        <script src="../js/util/Util.js" type="text/javascript"></script>
+        <script src="../js/util/Constantes.js" type="text/javascript"></script>
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" crossorigin="anonymous"></script>        
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" crossorigin="anonymous"></script>       
+        <script src="../js/user.js" type="text/javascript"></script>
+        </body>
+    </body>
+</html>

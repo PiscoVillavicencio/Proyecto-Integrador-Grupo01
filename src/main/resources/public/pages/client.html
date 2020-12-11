@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <link href="../css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+        <link href="../css/bcp.css" rel="stylesheet" type="text/css"/>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" type="text/css">
+        
+        <style>
+            .cardBcp{
+                width: 80%;
+                margin-right: auto;
+                margin: 0 auto; 
+            }
+            .row{
+                margin: 5px;
+            }
+            .msjAdvertencia{
+                color: red;
+            }
+        </style>
+        <script>
+            var ctx = "";
+        </script>
+    </head>
+    <body>
+       <body background="../img/fondoMenuBCP.png">
+         <section  id="appBcp">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <a class="navbar-brand" href="welcomeAdmin.html"><img src="../img/logoBCP.jpg" alt="" class="img"></a>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">{{user.nombre}} {{user.apellidos}}</a>
+                        </li>
+                        
+                            <li class="nav-item">
+                                <a class="nav-link" href="user.html">Usuario</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="client.html">Cliente</a>
+                            </li>                       
+                        <li class="nav-item">
+                            <a class="nav-link" href="../index.html">Salir</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+             <div class="container-fluid">
+                <div v-if="frmResult">
+                    <h2>Clientes</h2>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label>Nombres:</label>
+                                <input class="form-control" v-model="filter.nombres"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <a href="#" class="btn btn-primary"
+                               v-on:click="select()">
+                                Buscar
+                            </a>
+                            <a href="#"  class="btn btn-primary"
+                               v-on:click="showInsert()">
+                                Nuevo
+                            </a>
+                            <a href="#"  class="btn btn-primary"
+                               v-on:click="showNotiCliente()">
+                                Notificar
+                            </a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <table class="table tab-content table-bordered table-hover table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>USUARIO</th>
+                                        <th>NOMBRES</th>
+                                        <th>APELLIDOS</th>
+                                        <th>TIPO CLIENTE</th>
+                                        <th>ESTADO</th>
+                                        <th>OPERACION</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr  v-for="(row,index)  in result">
+                                        <th scope="row">{{index+1}}</th>
+                                        <td>{{row.usuario}}</td>
+                                        <td>{{row.nombres}}</td>
+                                        <td>{{row.apellidos}}</td>
+                                        <td>{{row.tipoCliente}}</td>
+                                        <td>
+                                            <label v-if="row.estado">ACTIVO</label>
+                                            <label v-if="!row.estado">INACTIVO</label>
+                                        </td>
+                                        <td>
+                                            <a href="#"  class="btn btn-primary btn-sm"
+                                               v-on:click="showUpdate(row)">
+                                                Editar
+                                            </a>
+                                            <a href="#"  class="btn btn-primary btn-sm"
+                                               v-on:click="showCuentas(row)">
+                                                Cuentas
+                                            </a>
+                                            <a v-if="row.estado" href="#"  class="btn btn-danger btn-sm"
+                                               v-on:click="exeInactivarCliente(row,false)">
+                                                Inactivar
+                                            </a>
+                                            <a v-if="!row.estado" href="#"  class="btn btn-success btn-sm"
+                                               v-on:click="exeInactivarCliente(row,true)">
+                                                Activar
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div v-if="frmInsert">
+                    <h4>Cliente</h4>
+                    <div class="row">
+                        <div class="col-sm-6 col-md-5 col-lg-3">
+                            <div class="form-group">
+                                <label>Nombres:</label>
+                                <input class="form-control" v-model="record.nombres"/>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-5 col-lg-3">
+                            <div class="form-group">
+                                <label>Apellidos:</label>
+                                <input class="form-control" v-model="record.apellidos"/>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-5 col-lg-3">
+                            <div class="form-group">
+                                <label>Tipo Cliente:</label>
+                                <select class="form-control" v-model="record.idTipoCliente">
+                                    <option class="form-control"  v-for="option in optionsTipoCliente" v-bind:value="option.idTipoCliente">
+                                        {{ option.nombre }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6 col-md-5 col-lg-3">
+                            <div class="form-group">
+                                <label>Usuario:</label>
+                                <input class="form-control" v-model="record.usuario"/>
+                            </div>
+                        </div>
+                        <div v-if="record.idUsuario!=null" class="col-sm-6 col-md-5 col-lg-3">
+                            <div class="form-group">
+                                <br>
+                                <label>¿Actualizar contraseña?:</label>                                
+                                <input v-model="record.flagPass" type="checkbox" >
+                            </div>
+                        </div>
+                    </div>
+                    <div v-if="record.idUsuario==null || record.flagPass" class="row">
+                        <div class="col-sm-6 col-md-5 col-lg-3">
+                            <div class="form-group">
+                                <label>Password:</label>
+                                <input class="form-control" type="password" v-model="record.password"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-if="out.out!=null" class="row">
+                        <div class="col-sm-6 col-md-5 col-lg-12">
+                            <div class="form-group">
+                                <label v-if="out.out==1" class="msjSuccess">{{out.message}}</label>
+                                <label v-if="out.out!=1" class="msjError">{{out.message}}</label>
+                            </div>
+                            <div v-if="out.out==1" class="form-group">
+                                <a href="#"  class="btn btn-success"
+                                   v-on:click="closeInsert()">
+                                    Inicio
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-if="out.out!=1" class="row">
+                        <div class="col-sm-12">
+                            <a href="#" class="btn btn-primary"
+                               v-on:click="exeInsert()">
+                                Aceptar
+                            </a>
+                            <a href="#"  class="btn btn-danger"
+                               v-on:click="closeInsert()">
+                                Cancelar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div v-if="frmCuentas">
+                    <h4>Cuentas</h4>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <label>Cliente:</label>
+                            <label>{{record.nombres}} {{record.apellidos}}</label>
+                        </div>
+                        <div class="col-sm-6">
+                            <label>Tipo Cliente:</label>
+                            <label>{{record.tipoCliente}}</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <a href="#"  class="btn btn-primary"
+                               v-on:click="showInsertCuenta()">
+                                Nuevo
+                            </a>
+                            <a href="#"  class="btn btn-danger"
+                               v-on:click="closeCuentas()">
+                                Cancelar
+                            </a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <table class="table tab-content table-bordered table-hover table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>NRO CUENTA</th>
+                                        <th>SALDO</th>
+                                        <th>NRO TARJETA</th>
+                                        <th>FECHA VENCIMIENTO</th>
+                                        <th>MONTO MÁXIMO MOVIMIENTO</th>
+                                        <th>OPERACION</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr  v-for="(row,index)  in resultCuenta">
+                                        <th scope="row">{{index+1}}</th>
+                                        <td>{{row.nroCuenta}}</td>
+                                        <td>{{row.saldo}}</td>
+                                        <td>{{row.nroTarjeta}}</td>
+                                        <td>{{row.fechaVencimientoString}}</td>
+                                        <td>{{row.monto}}</td>
+                                        <td>
+                                            <a href="#"  class="btn btn-primary btn-sm"
+                                               v-on:click="showUpdateCuenta(row)">
+                                                Editar
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div v-if="frmCuenta">
+                    <h4>Cuenta</h4>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <label>Cliente:</label>
+                            <label>{{record.nombres}} {{record.apellidos}}</label>
+                        </div>
+                        <div class="col-sm-6">
+                            <label>Tipo Cliente:</label>
+                            <label>{{record.tipoCliente}}</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label>Número de Cuenta:</label>
+                                <input class="form-control" v-model="recordCuenta.nroCuenta"/>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                <label>Saldo:</label>
+                                <input class="form-control" v-model="recordCuenta.saldo"/>
+                            </div>
+                        </div> 
+                    </div>
+                    <h4>Tarjeta</h4>
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                <label>Número de tarjeta:</label>
+                                <input class="form-control" v-model="recordCuenta.nroTarjeta"/>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label>Fecha Vencimiento:</label>
+                                <input class="form-control" type="date" v-model="recordCuenta.fechaVencimiento"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label>Límite de tarjeta:</label>
+                                <input class="form-control" v-model="recordCuenta.monto"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-if="outCuenta.out!=null" class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label v-if="outCuenta.out==1" class="msjSuccess">{{outCuenta.message}}</label>
+                                <label v-if="outCuenta.out!=1" class="msjError">{{outCuenta.message}}</label>
+                            </div>
+                            <div v-if="outCuenta.out==1" class="form-group">
+                                <a href="#"  class="btn btn-success"
+                                   v-on:click="closeInsertCuenta()">
+                                    Inicio
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-if="outCuenta.out!=1" class="row">
+                        <div class="col-sm-12">
+                            <a href="#" class="btn btn-primary"
+                               v-on:click="exeInsertCuenta()">
+                                Aceptar
+                            </a>
+                            <a href="#"  class="btn btn-danger"
+                               v-on:click="closeInsertCuenta()">
+                                Cancelar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div v-if="frmNotificar">
+                    <h4>Notificar a los clientes</h4>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label>Tipo Cliente:</label>
+                                <select class="form-control" v-model="recordNoti.idTipoCliente">
+                                    <option class="form-control"  v-for="option in optionsTipoCliente" v-bind:value="option.idTipoCliente">
+                                        {{ option.nombre }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label>Título:</label>
+                                <input class="form-control" v-model="recordNoti.titulo"/>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>Mensaje:</label>
+                                <textarea class="form-control" v-model="recordNoti.mensaje">
+                                </textarea>
+                            </div>
+                        </div> 
+                    </div>
+                    <div v-if="outNoti.out!=null" class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label v-if="outNoti.out==1" class="msjSuccess">{{outNoti.message}}</label>
+                                <label v-if="outNoti.out!=1" class="msjError">{{outNoti.message}}</label>
+                            </div>
+                            <div v-if="outNoti.out==1" class="form-group">
+                                <a href="#"  class="btn btn-success"
+                                   v-on:click="closeNotiCliente()">
+                                    Inicio
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-if="outNoti.out!=1" class="row">
+                        <div class="col-sm-12">
+                            <a href="#" class="btn btn-primary"
+                               v-on:click="exeNotiCliente()">
+                                Notificar
+                            </a>
+                            <a href="#"  class="btn btn-danger"
+                               v-on:click="closeNotiCliente()">
+                                Cancelar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <script src="../js/lib/axios.min.js" type="text/javascript"></script>
+        <script src="../js/lib/vue.js" type="text/javascript"></script>
+        <script src="../js/util/Util.js" type="text/javascript"></script>
+        <script src="../js/util/Constantes.js" type="text/javascript"></script>
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" crossorigin="anonymous"></script>        
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" crossorigin="anonymous"></script>       
+		<script src="../js/client.js" type="text/javascript"></script>
+        </body>
+    </body>
+</html>

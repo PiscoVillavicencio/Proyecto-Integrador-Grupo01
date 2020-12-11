@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome Home Page</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+</head>
+<body>
+    <h1>Welcome Home Page wewefwe</h1>
+        <div id="app">
+            <div>
+                <label>Tipo Empresa</label>
+                <input v-model="record.appellation" />
+            </div>
+            <div>
+                <a v-on:click="Save" href="#" >Guardar</a>
+            </div>
+            <div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tipo Empresa</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="row in table.result" >
+                            <td >{{ row.appellation }}</td>
+                            <td>
+                                <a v-on:click="Find(row)" href="#" >Editar</a>
+                                <a v-on:click="Delete(row)" href="#" >Eliminar</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    <script src="js/demo.js"></script>
+</body>
+</html>
